@@ -23,10 +23,15 @@ const getUser = (req, res) => {
   const { userId } = req.params;
 
   return User.findById(userId)
-    .then((user) => res.status(SUCCESS_CODE).send(user))
+    .then((user) => {
+      if (!user) {
+        res.status(NOT_FOUND_ERROR).send({ message: 'Такого пользователя не существует' });
+      }
+      res.status(SUCCESS_CODE).send(user);
+    })
     .catch((err) => {
       if (err.name === 'CastError') {
-        res.status(NOT_FOUND_ERROR).send({ message: 'Пользователь не найден' });
+        res.status(INVALID_DATA_ERROR).send({ message: 'Пользователь не найден' });
       } else {
         res.status(SERVER_ERROR).send({ message: 'На сервере произошла ошибка' });
       }
@@ -48,7 +53,7 @@ const createUser = (req, res) => {
 const updateUser = (req, res) => {
   const { name, about } = req.body;
 
-  User.findByIdAndUpdate(req.user._id, { name, about }, { new: true })
+  User.findByIdAndUpdate(req.user._id, { name, about }, { new: true, runValidators: true })
     .then((user) => res.status(SUCCESS_CODE).send(user))
     .catch((err) => {
       if (err.name === 'ValidationError') {

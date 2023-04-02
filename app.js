@@ -12,7 +12,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use(bodyParser.json());
 app.use((req, res, next) => {
   req.user = {
-    _id: '64258fa995b5f72ae776c1ba',
+    _id: '64294aa996d415bd45351def',
   };
 
   next();

@@ -53,7 +53,7 @@ const likeCard = (req, res) => {
   Card.findByIdAndUpdate(
     req.params.cardId,
     { $addToSet: { likes: req.user._id } },
-    { new: true },
+    { new: true, runValidators: true },
   )
     .then((card) => res.status(SUCCESS_CODE).send(card))
     .catch(() => res.status(SERVER_ERROR).send({ message: 'На сервере произошла ошибка' }));
@@ -63,7 +63,7 @@ const dislikeCard = (req, res) => {
   Card.findByIdAndUpdate(
     req.params.cardId,
     { $pull: { likes: req.user._id } },
-    { new: true },
+    { new: true, runValidators: true },
   )
     .then((card) => res.status(SUCCESS_CODE).send(card))
     .catch(() => res.status(SERVER_ERROR).sres({ message: 'На сервере произошла ошибка' }));
