@@ -23,7 +23,7 @@ const createCard = (req, res) => {
     .then((card) => res.status(SUCCESS_CODE).send(card))
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        res.status(INVALID_DATA_ERROR).send(err.message);
+        res.status(INVALID_DATA_ERROR).send({ message: err.message });
       }
       res.status(SERVER_ERROR).send({ message: 'На сервере произошла ошибка' });
     });

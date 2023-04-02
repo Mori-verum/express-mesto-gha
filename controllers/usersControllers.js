@@ -39,7 +39,7 @@ const createUser = (req, res) => {
     .then((user) => res.status(SUCCESS_CODE).send(user))
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        res.status(INVALID_DATA_ERROR).send(err.message);
+        res.status(INVALID_DATA_ERROR).send({ message: err.message });
       }
       res.status(SERVER_ERROR).send({ message: 'На сервере произошла ошибка' });
     });
@@ -52,7 +52,7 @@ const updateUser = (req, res) => {
     .then((user) => res.status(SUCCESS_CODE).send(user))
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        res.status(INVALID_DATA_ERROR).send(err.message);
+        res.status(INVALID_DATA_ERROR).send({ message: err.message });
       }
       res.status(SERVER_ERROR).send({ message: 'На сервере произошла ошибка' });
     });
