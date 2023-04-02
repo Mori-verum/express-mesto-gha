@@ -2,6 +2,7 @@ const User = require('../models/userSchema');
 const {
   SUCCESS_CODE,
   NOT_FOUND_ERROR,
+  INVALID_DATA_ERROR,
   SERVER_ERROR,
 } = require('../utils/statusCode');
 
@@ -36,7 +37,12 @@ const createUser = (req, res) => {
   const { name, about, avatar } = req.body;
   User.create({ name, about, avatar })
     .then((user) => res.status(SUCCESS_CODE).send(user))
-    .catch(() => res.status(SERVER_ERROR).send({ message: 'На сервере произошла ошибка' }));
+    .catch((err) => {
+      if (err.name === 'ValidationError') {
+        res.status(INVALID_DATA_ERROR).send(err.message);
+      }
+      res.status(SERVER_ERROR).send({ message: 'На сервере произошла ошибка' });
+    });
 };
 
 const updateUser = (req, res) => {
@@ -44,7 +50,12 @@ const updateUser = (req, res) => {
 
   User.findByIdAndUpdate(req.user._id, { name, about }, { new: true })
     .then((user) => res.status(SUCCESS_CODE).send(user))
-    .catch(() => res.status(SERVER_ERROR).send({ message: 'На сервере произошла ошибка' }));
+    .catch((err) => {
+      if (err.name === 'ValidationError') {
+        res.status(INVALID_DATA_ERROR).send(err.message);
+      }
+      res.status(SERVER_ERROR).send({ message: 'На сервере произошла ошибка' });
+    });
 };
 
 const updateAvatar = (req, res) => {

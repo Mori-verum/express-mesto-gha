@@ -2,6 +2,7 @@ const Card = require('../models/cardSchema');
 const {
   SUCCESS_CODE,
   NOT_FOUND_ERROR,
+  INVALID_DATA_ERROR,
   SERVER_ERROR,
 } = require('../utils/statusCode');
 
@@ -20,7 +21,12 @@ const createCard = (req, res) => {
   const { name, link } = req.body;
   Card.create({ name, link, owner: req.user._id })
     .then((card) => res.status(SUCCESS_CODE).send(card))
-    .catch(() => res.status(SERVER_ERROR).send({ message: 'На сервере произошла ошибка' }));
+    .catch((err) => {
+      if (err.name === 'ValidationError') {
+        res.status(INVALID_DATA_ERROR).send(err.message);
+      }
+      res.status(SERVER_ERROR).send({ message: 'На сервере произошла ошибка' });
+    });
 };
 
 const deleteCard = (req, res) => {
@@ -31,7 +37,7 @@ const deleteCard = (req, res) => {
       if (card) {
         res.status(SUCCESS_CODE).send(card);
       } else {
-        res.status(404).send({ message: 'Карточка не найдена' });
+        res.status(INVALID_DATA_ERROR).send({ message: 'Карточка не найдена' });
       }
     })
     .catch((err) => {
