@@ -1,14 +1,12 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
-const path = require('path');
 const routes = require('./routes/index');
 
 const { PORT = 3000 } = process.env;
 
 const app = express();
 
-app.use(express.static(path.join(__dirname, 'public')));
 app.use(bodyParser.json());
 app.use((req, res, next) => {
   req.user = {

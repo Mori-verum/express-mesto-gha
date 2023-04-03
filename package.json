@@ -9,7 +9,7 @@
     "start": "node app.js"
   },
   "keywords": [],
-  "author": "",
+  "author": "Anastasia Selivokhina",
   "license": "ISC",
   "devDependencies": {
     "eslint": "^8.36.0",

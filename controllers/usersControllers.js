@@ -9,9 +9,6 @@ const {
 const getUsers = (req, res) => {
   User.find({})
     .then((users) => {
-      if (!users) {
-        res.status(NOT_FOUND_ERROR).send({ message: 'Карточки не найдены' });
-      }
       res.status(SUCCESS_CODE).send(users);
     })
     .catch(() => {
@@ -26,12 +23,13 @@ const getUser = (req, res) => {
     .then((user) => {
       if (!user) {
         res.status(NOT_FOUND_ERROR).send({ message: 'Такого пользователя не существует' });
+        return;
       }
       res.status(SUCCESS_CODE).send(user);
     })
     .catch((err) => {
       if (err.name === 'CastError') {
-        res.status(INVALID_DATA_ERROR).send({ message: 'Пользователь не найден' });
+        res.status(INVALID_DATA_ERROR).send({ message: 'Некорректный id пользователя' });
       } else {
         res.status(SERVER_ERROR).send({ message: 'На сервере произошла ошибка' });
       }
@@ -45,6 +43,7 @@ const createUser = (req, res) => {
     .catch((err) => {
       if (err.name === 'ValidationError') {
         res.status(INVALID_DATA_ERROR).send({ message: err.message });
+        return;
       }
       res.status(SERVER_ERROR).send({ message: 'На сервере произошла ошибка' });
     });
@@ -54,12 +53,21 @@ const updateUser = (req, res) => {
   const { name, about } = req.body;
 
   User.findByIdAndUpdate(req.user._id, { name, about }, { new: true, runValidators: true })
-    .then((user) => res.status(SUCCESS_CODE).send(user))
+    .then((user) => {
+      if (!user) {
+        res.status(NOT_FOUND_ERROR).send({ message: 'Такого пользователя не существует' });
+        return;
+      }
+      res.status(SUCCESS_CODE).send(user);
+    })
     .catch((err) => {
       if (err.name === 'ValidationError') {
         res.status(INVALID_DATA_ERROR).send({ message: err.message });
+      } else if (err.name === 'CastError') {
+        res.status(INVALID_DATA_ERROR).send({ message: 'Некорректный id пользователя' });
+      } else {
+        res.status(SERVER_ERROR).send({ message: 'На сервере произошла ошибка' });
       }
-      res.status(SERVER_ERROR).send({ message: 'На сервере произошла ошибка' });
     });
 };
 
@@ -67,8 +75,22 @@ const updateAvatar = (req, res) => {
   const { avatar } = req.body;
 
   User.findByIdAndUpdate(req.user._id, { avatar }, { new: true })
-    .then((user) => res.status(SUCCESS_CODE).send(user))
-    .catch(() => res.status(SERVER_ERROR).send({ message: 'На сервере произошла ошибка' }));
+    .then((user) => {
+      if (!user) {
+        res.status(NOT_FOUND_ERROR).send({ message: 'Такого пользователя не существует' });
+        return;
+      }
+      res.status(SUCCESS_CODE).send(user);
+    })
+    .catch((err) => {
+      if (err.name === 'ValidationError') {
+        res.status(INVALID_DATA_ERROR).send({ message: err.message });
+      } else if (err.name === 'CastError') {
+        res.status(INVALID_DATA_ERROR).send({ message: 'Некорректный id пользователя' });
+      } else {
+        res.status(SERVER_ERROR).send({ message: 'На сервере произошла ошибка' });
+      }
+    });
 };
 
 module.exports = {
