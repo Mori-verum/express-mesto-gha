@@ -22,7 +22,7 @@ const createCard = (req, res, next) => {
         next(new BadRequestError(err.message));
         return;
       }
-      next();
+      next(err);
     });
 };
 
@@ -39,14 +39,14 @@ const deleteCard = (req, res, next) => {
         throw new ForbiddenError('Невозможно удалить чужую карточку!');
       }
       card.remove();
-      return card;
+      res.status(200).send(card);
     })
-    .then((card) => res.status(200).send(card))
     .catch((err) => {
       if (err.name === 'CastError') {
         next(new BadRequestError('Некорректный id карточки'));
+        return;
       }
-      next();
+      next(err);
     });
 };
 
@@ -65,8 +65,9 @@ const likeCard = (req, res, next) => {
     .catch((err) => {
       if (err.name === 'CastError') {
         next(new BadRequestError('Некорректный id карточки'));
+        return;
       }
-      next();
+      next(err);
     });
 };
 
@@ -85,8 +86,9 @@ const dislikeCard = (req, res, next) => {
     .catch((err) => {
       if (err.name === 'CastError') {
         next(new BadRequestError('Некорректный id карточки'));
+        return;
       }
-      next();
+      next(err);
     });
 };
 

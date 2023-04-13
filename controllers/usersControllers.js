@@ -3,7 +3,6 @@ const jwt = require('jsonwebtoken');
 const User = require('../models/userSchema');
 const {
   NotFoundError,
-  AuthError,
   BadRequestError,
   ConflictError,
 } = require('../utils/errors/index');
@@ -29,9 +28,9 @@ const getUser = (req, res, next) => {
     .catch((err) => {
       if (err.name === 'CastError') {
         next(new BadRequestError('Некорректный id пользователя'));
-      } else {
-        next();
+        return;
       }
+      next(err);
     });
 };
 
@@ -54,8 +53,9 @@ const createUser = (req, res, next) => {
     .catch((err) => {
       if (err.name === 'ValidationError') {
         next(new BadRequestError(err.message));
+        return;
       }
-      next();
+      next(err);
     });
 };
 
@@ -75,7 +75,7 @@ const updateUser = (req, res, next) => {
       } else if (err.name === 'CastError') {
         next(new BadRequestError('Некорректный id пользователя'));
       } else {
-        next();
+        next(err);
       }
     });
 };
@@ -96,7 +96,7 @@ const updateAvatar = (req, res, next) => {
       } else if (err.name === 'CastError') {
         next(new BadRequestError('Некорректный id пользователя'));
       } else {
-        next();
+        next(err);
       }
     });
 };
@@ -117,8 +117,9 @@ const login = (req, res, next) => {
     .catch((err) => {
       if (err.code === 11000) {
         next(new ConflictError('Такой пользователь уже зарегистрирован'));
+        return;
       }
-      next(new AuthError('Неверные логин или пароль пользователя'));
+      next(err);
     });
 };
 
