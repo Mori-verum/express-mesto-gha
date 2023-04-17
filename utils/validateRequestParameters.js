@@ -20,11 +20,7 @@ const validateUserBody = celebrate({
       }),
     avatar: Joi.string()
       .pattern(regex)
-      .message('Поле "avatar" должно быть валидным url-адресом')
-      .required()
-      .messages({
-        'string.empty': 'Поле "avatar" должно быть заполнено',
-      }),
+      .message('Поле "avatar" должно быть валидным url-адресом'),
     email: Joi.string()
       .email()
       .message('Поле "email" должно быть валидным email-адресом')

@@ -49,13 +49,24 @@ const createUser = (req, res, next) => {
       email,
       password: hash,
     }))
-    .then((user) => res.status(200).send(user))
+    .then((user) => {
+      const { _id } = user;
+      res.status(200).send({
+        _id,
+        name,
+        about,
+        avatar,
+        email,
+      });
+    })
     .catch((err) => {
       if (err.name === 'ValidationError') {
         next(new BadRequestError(err.message));
-        return;
+      } else if (err.code === 11000) {
+        next(new ConflictError('Такой пользователь уже существует'));
+      } else {
+        next(err);
       }
-      next(err);
     });
 };
 
@@ -114,13 +125,7 @@ const login = (req, res, next) => {
         })
         .end();
     })
-    .catch((err) => {
-      if (err.code === 11000) {
-        next(new ConflictError('Такой пользователь уже зарегистрирован'));
-        return;
-      }
-      next(err);
-    });
+    .catch(next);
 };
 
 const getCurrentUser = (req, res) => {
