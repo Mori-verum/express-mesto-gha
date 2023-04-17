@@ -1,5 +1,4 @@
 const { celebrate, Joi } = require('celebrate');
-// const { validateUrl } = require('./validateUrl');
 const { regex } = require('./validateUrl');
 
 const validateUserBody = celebrate({

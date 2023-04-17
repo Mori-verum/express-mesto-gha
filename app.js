@@ -1,6 +1,7 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
+const { errors } = require('celebrate');
 const { validateUserBody, validateLoginParametrs } = require('./utils/validateRequestParameters');
 const routes = require('./routes/index');
 const {
@@ -20,6 +21,7 @@ app.post('/signup', validateUserBody, createUser);
 app.use(auth);
 app.use(routes);
 
+app.use(errors());
 // eslint-disable-next-line no-unused-vars
 app.use((err, req, res, next) => {
   const { statusCode = 500, message } = err;
