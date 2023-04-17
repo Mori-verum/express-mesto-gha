@@ -1,5 +1,5 @@
 const { celebrate, Joi } = require('celebrate');
-const { validateUrl } = require('./validateUrl');
+// const { validateUrl } = require('./validateUrl');
 const { regex } = require('./validateUrl');
 
 const validateUserBody = celebrate({
@@ -20,7 +20,7 @@ const validateUserBody = celebrate({
         'string.max': 'Максимальная длина поля "about" - 30',
       }),
     avatar: Joi.string()
-      .custom(validateUrl)
+      .pattern(regex)
       .message('Поле "avatar" должно быть валидным url-адресом')
       .required()
       .messages({
