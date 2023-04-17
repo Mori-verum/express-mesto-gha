@@ -41,6 +41,7 @@ const createUser = (req, res, next) => {
     avatar,
     email,
   } = req.body;
+
   bcrypt.hash(req.body.password, 10)
     .then((hash) => User.create({
       name,
@@ -50,19 +51,20 @@ const createUser = (req, res, next) => {
       password: hash,
     }))
     .then((user) => {
-      const { _id } = user;
       res.status(200).send({
-        _id,
-        name,
-        about,
-        avatar,
-        email,
+        _id: user._id,
+        name: user.name,
+        about: user.about,
+        avatar: user.avatar,
+        email: user.email,
       });
     })
     .catch((err) => {
-      if (err.code === 11000) {
-        next(new ConflictError('Такой пользователь уже существует'));
+      if (err.name === 'MongoServerError' && err.code === 11000) {
+        next(new ConflictError('Пользователь с таким логином уже существует'));
+        return;
       }
+      next(err);
     });
 };
 
