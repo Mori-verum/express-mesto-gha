@@ -60,12 +60,8 @@ const createUser = (req, res, next) => {
       });
     })
     .catch((err) => {
-      if (err.name === 'ValidationError') {
-        next(new BadRequestError(err.message));
-      } else if (err.code === 11000) {
+      if (err.code === 11000) {
         next(new ConflictError('Такой пользователь уже существует'));
-      } else {
-        next(err);
       }
     });
 };
