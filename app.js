@@ -8,17 +8,17 @@ const {
   createUser,
   login,
 } = require('./controllers/usersControllers');
-const auth = require('./middlewares/auth');
 
 const { PORT = 3000 } = process.env;
 
 const app = express();
 
 app.use(bodyParser.json());
+
 app.post('/signin', validateLoginParametrs, login);
 app.post('/signup', validateUserBody, createUser);
 
-app.use(auth);
+// app.use(auth);
 app.use(routes);
 
 app.use(errors());

@@ -9,7 +9,6 @@ const validateUserBody = celebrate({
       .messages({
         'string.min': 'Минимальная длина поля "name" - 2',
         'string.max': 'Максимальная длина поля "name" - 30',
-        'string.empty': 'Поле "name" должно быть заполнено',
       }),
     about: Joi.string()
       .min(2)

@@ -2,11 +2,13 @@ const router = require('express').Router();
 
 const userRoutes = require('./users');
 const cardsRoutes = require('./cards');
+const auth = require('../middlewares/auth');
 const { NotFoundError } = require('../utils/errors');
 
-router.use('/users', userRoutes);
-router.use('/cards', cardsRoutes);
-router.use((req, res, next) => {
+router.use('/users', auth, userRoutes);
+router.use('/cards', auth, cardsRoutes);
+
+router.use('*', (req, res, next) => {
   next(new NotFoundError('Страница по указанному маршруту не найдена'));
 });
 
