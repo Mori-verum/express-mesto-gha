@@ -9,7 +9,7 @@ const AuthError = require('../utils/errors/AuthError');
 const getUsers = (req, res, next) => {
   User.find({})
     .then((users) => {
-      res.status(200).send(users);
+      res.send(users);
     })
     .catch(next);
 };
@@ -22,7 +22,7 @@ const getUser = (req, res, next) => {
       if (!user) {
         throw new NotFoundError('Такого пользователя не существует');
       }
-      res.status(200).send(user);
+      res.send(user);
     })
     .catch((err) => {
       if (err.name === 'CastError') {
@@ -62,7 +62,7 @@ const createUser = async (req, res, next) => {
       return next(new ConflictError('Пользователь с таким email уже существует'));
     }
     if (err.name === 'ValidationError') {
-      next(new BadRequestError(err.message));
+      next(new BadRequestError('Переданы некорректные данные'));
     }
     return next(err);
   }
@@ -76,11 +76,11 @@ const updateUser = (req, res, next) => {
       if (!user) {
         throw new NotFoundError('Такого пользователя не существует');
       }
-      res.status(200).send(user);
+      res.send(user);
     })
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        next(new BadRequestError(err.message));
+        next(new BadRequestError('Переданы некорректные данные'));
       } else if (err.name === 'CastError') {
         next(new BadRequestError('Некорректный id пользователя'));
       } else {
@@ -97,11 +97,11 @@ const updateAvatar = (req, res, next) => {
       if (!user) {
         throw new NotFoundError('Такого пользователя не существует');
       }
-      res.status(200).send(user);
+      res.send(user);
     })
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        next(new BadRequestError(err.message));
+        next(new BadRequestError('Переданы некорректные данные'));
       } else if (err.name === 'CastError') {
         next(new BadRequestError('Некорректный id пользователя'));
       } else {
@@ -137,13 +137,17 @@ const login = (req, res, next) => {
     .catch(next);
 };
 
+const logout = (req, res) => {
+  res.clearCookie('jwt').send({ message: 'Выход' });
+};
+
 const getCurrentUser = (req, res, next) => {
   User.findById(req.user._id)
     .then((user) => {
       if (!user) {
         throw new NotFoundError(`Пользователь с id: ${req.user._id} не найден`);
       }
-      res.status(200).send(user);
+      res.send(user);
     })
     .catch(next);
 };
@@ -155,5 +159,6 @@ module.exports = {
   updateUser,
   updateAvatar,
   login,
+  logout,
   getCurrentUser,
 };

@@ -8,7 +8,9 @@ const routes = require('./routes/index');
 const {
   createUser,
   login,
+  logout,
 } = require('./controllers/usersControllers');
+const errorHandler = require('./middlewares/errorHandler');
 
 const { PORT = 3000 } = process.env;
 
@@ -18,25 +20,13 @@ app.use(bodyParser.json());
 app.use(cookieParser());
 
 app.post('/signin', validateLoginParametrs, login);
-// app.post('/signin', login);
 app.post('/signup', validateUserBody, createUser);
+app.get('/signout', logout);
 
-// app.use(auth);
 app.use(routes);
 
 app.use(errors());
-// eslint-disable-next-line no-unused-vars
-app.use((err, req, res, next) => {
-  const { statusCode = 500, message } = err;
-  res
-    .status(statusCode)
-    .send({
-      message: statusCode === 500
-        ? 'На сервере произошла ошибка...'
-        : message,
-    });
-  next();
-});
+app.use(errorHandler);
 
 mongoose.connect('mongodb://0.0.0.0:27017/mestodb');
 
