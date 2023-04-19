@@ -38,7 +38,7 @@ const deleteCard = (req, res, next) => {
         throw new ForbiddenError('Невозможно удалить чужую карточку!');
       }
       card.deleteOne();
-      res.send('Карточка удалена!');
+      res.send({ message: 'Карточка удалена!' });
     })
     .catch((err) => {
       if (err.name === 'CastError') {
