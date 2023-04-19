@@ -1,6 +1,7 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
+const cookieParser = require('cookie-parser');
 const { errors } = require('celebrate');
 const { validateUserBody, validateLoginParametrs } = require('./utils/validateRequestParameters');
 const routes = require('./routes/index');
@@ -14,8 +15,10 @@ const { PORT = 3000 } = process.env;
 const app = express();
 
 app.use(bodyParser.json());
+app.use(cookieParser());
 
-app.post('/signin', validateLoginParametrs, login);
+// app.post('/signin', validateLoginParametrs, login);
+app.post('/signin', login);
 app.post('/signup', validateUserBody, createUser);
 
 // app.use(auth);

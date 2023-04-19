@@ -4,6 +4,7 @@ const User = require('../models/userSchema');
 const NotFoundError = require('../utils/errors/NotFoundError');
 const BadRequestError = require('../utils/errors/BadRequestError');
 const ConflictError = require('../utils/errors/ConflictError');
+const AuthError = require('../utils/errors/AuthError');
 
 const getUsers = (req, res, next) => {
   User.find({})
@@ -111,10 +112,21 @@ const updateAvatar = (req, res, next) => {
 
 const login = (req, res, next) => {
   const { email, password } = req.body;
+  let userId;
 
-  return User.findByCredentials(email, password)
+  User.findOne({ email }).select('+password')
     .then((user) => {
-      const token = jwt.sign({ _id: user._id }, 'user-secret-key', { expiresIn: '7d' });
+      userId = user._id;
+      if (!user) {
+        return Promise.reject(new AuthError('Неверные логин или пароль пользователя'));
+      }
+      return bcrypt.compare(password, user.password);
+    })
+    .then((matched) => {
+      if (!matched) {
+        return Promise.reject(new AuthError('Неверные логин или пароль пользователя'));
+      }
+      const token = jwt.sign({ _id: userId }, 'user-secret-key', { expiresIn: '7d' });
       return res
         .cookie('jwt', token, {
           maxAge: 3600000 * 24 * 7,
