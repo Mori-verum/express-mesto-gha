@@ -116,10 +116,10 @@ const login = (req, res, next) => {
 
   User.findOne({ email }).select('+password')
     .then((user) => {
-      userId = user._id;
       if (!user) {
         return Promise.reject(new AuthError('Неверные логин или пароль пользователя'));
       }
+      userId = user._id;
       return bcrypt.compare(password, user.password);
     })
     .then((matched) => {
