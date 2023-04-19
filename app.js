@@ -17,8 +17,8 @@ const app = express();
 app.use(bodyParser.json());
 app.use(cookieParser());
 
-// app.post('/signin', validateLoginParametrs, login);
-app.post('/signin', login);
+app.post('/signin', validateLoginParametrs, login);
+// app.post('/signin', login);
 app.post('/signup', validateUserBody, createUser);
 
 // app.use(auth);
