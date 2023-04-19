@@ -125,16 +125,20 @@ const login = (req, res, next) => {
     .catch(next);
 };
 
-const getCurrentUser = (req, res) => {
+const getCurrentUser = (req, res, next) => {
   User.findById(req.user._id)
     .then((user) => {
+      if (!user) {
+        throw new NotFoundError(`Пользователь с id: ${req.user._id} не найден`);
+      }
       res.status(200).send(user);
-    });
+    })
+    .catch(next);
 };
 
 module.exports = {
-  getUser,
   getUsers,
+  getUser,
   createUser,
   updateUser,
   updateAvatar,

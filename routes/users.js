@@ -1,8 +1,8 @@
 const usersRouter = require('express').Router();
 const { validateUserId, validateUserInfo, validateUserAvatar } = require('../utils/validateRequestParameters');
 const {
-  getUser,
   getUsers,
+  getUser,
   updateUser,
   updateAvatar,
   getCurrentUser,
