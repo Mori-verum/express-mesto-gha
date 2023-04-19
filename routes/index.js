@@ -1,11 +1,11 @@
 const router = require('express').Router();
 
-const userRoutes = require('./users');
+const usersRoutes = require('./users');
 const cardsRoutes = require('./cards');
 const auth = require('../middlewares/auth');
-const { NotFoundError } = require('../utils/errors');
+const NotFoundError = require('../utils/errors/NotFoundError');
 
-router.use('/users', auth, userRoutes);
+router.use('/users', auth, usersRoutes);
 router.use('/cards', auth, cardsRoutes);
 
 router.use('*', (req, res, next) => {

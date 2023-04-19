@@ -1,11 +1,9 @@
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const User = require('../models/userSchema');
-const {
-  NotFoundError,
-  BadRequestError,
-  ConflictError,
-} = require('../utils/errors/index');
+const NotFoundError = require('../utils/errors/NotFoundError');
+const BadRequestError = require('../utils/errors/BadRequestError');
+const ConflictError = require('../utils/errors/ConflictError');
 
 const getUsers = (req, res, next) => {
   User.find({})
@@ -34,44 +32,39 @@ const getUser = (req, res, next) => {
     });
 };
 
-const createUser = (req, res, next) => {
-  const {
-    name,
-    about,
-    avatar,
-    email,
-    password,
-  } = req.body;
+const createUser = async (req, res, next) => {
+  try {
+    const hash = await bcrypt.hash(req.body.password, 10);
+    const {
+      name,
+      about,
+      avatar,
+      email,
+    } = req.body;
 
-  bcrypt
-    .hash(password, 10)
-    .then((hash) => User.create({
+    const user = await User.create({
       name,
       about,
       avatar,
       email,
       password: hash,
-    }))
-    .then((user) => {
-      res.send({
-        _id: user._id,
-        name: user.name,
-        about: user.about,
-        avatar: user.avatar,
-        email: user.email,
-      });
-    })
-    .catch((err) => {
-      if (err.code === 11000) {
-        next(new ConflictError('Пользователь с таким email уже существует'));
-        return;
-      }
-      if (err.name === 'ValidationError') {
-        next(new BadRequestError('Указаны некорректные данные'));
-        return;
-      }
-      next(err);
     });
+    return res.status(200).send({
+      _id: user._id,
+      name: user.name,
+      about: user.about,
+      avatar: user.avatar,
+      email: user.email,
+    });
+  } catch (err) {
+    if (err.code === 11000) {
+      return next(new ConflictError('Пользователь с таким email уже существует'));
+    }
+    if (err.name === 'ValidationError') {
+      next(new BadRequestError(err.message));
+    }
+    return next(err);
+  }
 };
 
 const updateUser = (req, res, next) => {

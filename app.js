@@ -32,6 +32,7 @@ app.use((err, req, res, next) => {
         ? 'На сервере произошла ошибка...'
         : message,
     });
+  next();
 });
 
 mongoose.connect('mongodb://0.0.0.0:27017/mestodb');
